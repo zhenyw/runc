@@ -472,6 +472,14 @@ func createCgroupConfig(opts *CreateOpts) (*configs.Cgroup, error) {
 			})
 		}
 	}
+	if r.GPU != nil {
+		if r.GPU.GPUMemory != nil {
+			c.Resources.GPUMemory = *r.GPU.GPUMemory
+		}
+		if r.GPU.GPUPriority != nil {
+			c.Resources.GPUPriority = *r.GPU.GPUPriority
+		}
+	}
 	return c, nil
 }
 

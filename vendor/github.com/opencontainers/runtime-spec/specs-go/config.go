@@ -326,6 +326,14 @@ type LinuxNetwork struct {
 	Priorities []LinuxInterfacePriority `json:"priorities,omitempty"`
 }
 
+// LinuxGPU
+type LinuxGPU struct {
+	// GPU Mem Limit
+	GPUMemory *uint64 `json:"memory,omitempty"`
+	// GPU Priority
+	GPUPriority *int64 `json:"prio,omitempty"`
+}
+
 // LinuxResources has container runtime resource constraints
 type LinuxResources struct {
 	// Devices configures the device whitelist.
@@ -346,6 +354,8 @@ type LinuxResources struct {
 	HugepageLimits []LinuxHugepageLimit `json:"hugepageLimits,omitempty"`
 	// Network restriction configuration
 	Network *LinuxNetwork `json:"network,omitempty"`
+	// GPU
+	GPU *LinuxGPU `json:"gpu,omitempty"`
 }
 
 // LinuxDevice represents the mknod information for a Linux special device file

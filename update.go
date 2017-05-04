@@ -145,6 +145,10 @@ other options are ignored.
 			Pids: &specs.LinuxPids{
 				Limit: 0,
 			},
+			GPU: &specs.LinuxGPU{
+				GPUMemory:   u64Ptr(0),
+				GPUPriority: i64Ptr(0),
+			},
 		}
 
 		config := container.Config()
@@ -202,6 +206,7 @@ other options are ignored.
 
 				{"cpu-quota", r.CPU.Quota},
 				{"cpu-rt-runtime", r.CPU.RealtimeRuntime},
+				{"gpu_prio", r.GPU.GPUPriority},
 			} {
 				if val := context.String(pair.opt); val != "" {
 					var err error
@@ -220,6 +225,7 @@ other options are ignored.
 				{"kernel-memory", r.Memory.Kernel},
 				{"kernel-memory-tcp", r.Memory.KernelTCP},
 				{"memory-reservation", r.Memory.Reservation},
+				{"gpu_memory", r.GPU.GPUMemory},
 			} {
 				if val := context.String(pair.opt); val != "" {
 					var v int64
@@ -253,6 +259,9 @@ other options are ignored.
 		config.Cgroups.Resources.MemoryReservation = *r.Memory.Reservation
 		config.Cgroups.Resources.MemorySwap = *r.Memory.Swap
 		config.Cgroups.Resources.PidsLimit = r.Pids.Limit
+
+		config.Cgroups.Resources.GPUMemory = *r.GPU.GPUMemory
+		config.Cgroups.Resources.GPUPriority = *r.GPU.GPUPriority
 
 		return container.Set(config)
 	},
