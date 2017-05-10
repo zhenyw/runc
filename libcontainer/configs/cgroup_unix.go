@@ -121,4 +121,10 @@ type Resources struct {
 
 	// Set class identifier for container's network packets
 	NetClsClassid uint32 `json:"net_cls_classid_u"`
+
+	// GPU Memory limit (in bytes)
+	GpuMemory uint64 `json:"gpu_memory"`
+
+	// GPU priority
+	GpuPriority int64 `json:"gpu_prio"`
 }

@@ -464,6 +464,14 @@ func createCgroupConfig(name string, useSystemdCgroup bool, spec *specs.Spec) (*
 			})
 		}
 	}
+	if r.GPU != nil {
+		if r.GPU.Memory != nil {
+			c.Resources.GpuMemory = *r.GPU.Memory
+		}
+		if r.GPU.Priority != nil {
+			c.Resources.GpuPriority = *r.GPU.Priority
+		}
+	}
 	return c, nil
 }
 

@@ -13,6 +13,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+func i64Ptr(i int64) *int64   { return &i }
 func u64Ptr(i uint64) *uint64 { return &i }
 func u16Ptr(i uint16) *uint16 { return &i }
 
@@ -134,6 +135,10 @@ other options are ignored.
 			BlockIO: &specs.BlockIO{
 				Weight: u16Ptr(0),
 			},
+			GPU: &specs.GPU{
+				Memory:   u64Ptr(0),
+				Priority: i64Ptr(0),
+			},
 		}
 
 		config := container.Config()
@@ -188,6 +193,20 @@ other options are ignored.
 			}
 			for _, pair := range []struct {
 				opt  string
+				dest *int64
+			}{
+				{"gpu_prio", r.GPU.Priority},
+			} {
+				if val := context.String(pair.opt); val != "" {
+					var err error
+					*pair.dest, err = strconv.ParseInt(val, 10, 64)
+					if err != nil {
+						return fmt.Errorf("invalid value for %s: %s", pair.opt, err)
+					}
+				}
+			}
+			for _, pair := range []struct {
+				opt  string
 				dest *uint64
 			}{
 				{"kernel-memory", r.Memory.Kernel},
@@ -195,6 +214,7 @@ other options are ignored.
 				{"memory", r.Memory.Limit},
 				{"memory-reservation", r.Memory.Reservation},
 				{"memory-swap", r.Memory.Swap},
+				{"gpu_memory", r.GPU.Memory},
 			} {
 				if val := context.String(pair.opt); val != "" {
 					v, err := units.RAMInBytes(val)
@@ -220,6 +240,9 @@ other options are ignored.
 		config.Cgroups.Resources.Memory = int64(*r.Memory.Limit)
 		config.Cgroups.Resources.MemoryReservation = int64(*r.Memory.Reservation)
 		config.Cgroups.Resources.MemorySwap = int64(*r.Memory.Swap)
+
+		config.Cgroups.Resources.GpuMemory = *r.GPU.Memory
+		config.Cgroups.Resources.GpuPriority = *r.GPU.Priority
 
 		if err := container.Set(config); err != nil {
 			return err
